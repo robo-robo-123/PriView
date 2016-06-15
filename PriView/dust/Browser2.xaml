@@ -1,0 +1,88 @@
+﻿<Page
+    x:Class="PriView.Browser.Browser2"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PriView.Browser"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+  
+  <Page.TopAppBar>
+    <AppBar >
+      <Grid Grid.Row="2">
+        <Grid.ColumnDefinitions>
+
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition/>
+          <ColumnDefinition Width="Auto" MinWidth="150"/>
+
+        </Grid.ColumnDefinitions>
+
+
+        <AppBarButton x:Name="HomeButton"  Margin="60,25,60,0" Icon="Home" IsCompact="True" 
+                                  Tapped="buttonHome_Tapped"/>
+
+
+
+        <!-- アドレス・バー                          KeyDown="textBox1_KeyDown"Text="{Binding Source, ElementName=webView1, Mode=OneWay}"-->
+        <TextBox x:Name="textBox1" VerticalAlignment="Center"
+
+                          Margin="20,45,0,45" Height="32" Grid.Column="1" Text="{Binding Source, ElementName=webView1, Mode=OneWay}"
+                         />
+
+        <StackPanel Grid.Column="2" HorizontalAlignment="Right" Orientation="Horizontal" Width="150">
+          <!-- ［GO］ボタン -->
+          <Button Content="&#x25B6;" Margin="0,0,-2,0" Padding="8,4"
+                            Tapped="buttonGo_Tapped"
+                            />
+
+          <AppBarButton  Margin="20,25,0,0" Icon="Refresh" IsCompact="True" 
+                                  Tapped="buttonRefresh_Tapped"
+                            />
+
+        </StackPanel>
+      </Grid>
+    </AppBar>
+  </Page.TopAppBar>
+
+
+  <Page.BottomAppBar>
+    <AppBar ClosedDisplayMode="Compact" >
+
+      <RelativePanel>
+        <AppBarButton x:Name="buttonGoBack"   Icon="Back" IsCompact="True" 
+                                  Tapped="buttonGoBack_Tapped"        />
+
+        <AppBarButton x:Name="buttonGoForward" Icon="Forward" IsCompact="True" 
+              Tapped="buttonGoForward_Tapped"
+               RelativePanel.RightOf="buttonGoBack" />
+
+        <!-- アドレス・バー -->
+        <TextBox x:Name="textBlock1"  VerticalAlignment="Center" TextWrapping="Wrap" Foreground="White" 
+                           
+                     RelativePanel.RightOf="buttonGoForward" Text="{Binding DocumentTitle, ElementName=webView1, Mode=OneWay}"
+                         />
+
+        <!-- ［GO］ボタン -->
+          <Button Content="P"  
+                            Tapped="Button_Tapped" FontSize="36" RelativePanel.RightOf="textBlock1" HorizontalAlignment="Right"
+                            />
+
+        <!-- ［GO］ボタン 
+        <AppBarSeparator HorizontalAlignment="Left" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="79" Width="354"/>-->
+      </RelativePanel>
+    </AppBar>
+  </Page.BottomAppBar>
+
+  <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+      <WebView x:Name="webView1" Source="http://yahoo.co.jp"   NewWindowRequested="webView1_NewWindowRequested"/>
+
+    <!-- <ListViewItem Width="160" Height="600" HorizontalAlignment="Left" Margin="10,0,0,0" Background="White"></ListViewItem>
+    <TextBlock HorizontalAlignment="Left" Margin="10,0,0,0" TextWrapping="Wrap"
+               Text="{Binding DocumentTitle, ElementName=webView1, Mode=OneWay}" VerticalAlignment="Center" Width="160" Height="600"
+               />
+    <TextBox HorizontalAlignment="Left" Margin="-169,-448,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top"/>
+-->
+  </Grid>
+</Page>

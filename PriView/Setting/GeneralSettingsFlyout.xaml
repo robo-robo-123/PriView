@@ -1,0 +1,81 @@
+﻿<Page
+    x:Class="PriView.Setting.GeneralSettingsFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Pass"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignWidth="346">
+
+    <!-- この StackPanel はコンテンツ セクションの垂直レイアウト用のルート パネルとして機能します -->
+    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+
+        <!-- 以下の StackPanel では個々のコンテンツ セクションを定義します -->
+
+        <!-- コンテンツ セクション 1-->
+        <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
+
+            <!-- セクション 1 ヘッダー -->
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="履歴の削除" />
+
+            <!-- セクション 1 ボディ -->
+            <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,25" TextWrapping="Wrap">
+                <TextBlock.Text>
+履歴を一括して削除します。
+                </TextBlock.Text>
+            </TextBlock>
+      <Button x:Name="historyDeleteButton" Content="削除" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="historyDeleteButton_Click"/>
+
+    </StackPanel>
+
+    <!-- コンテンツ セクション 1-->
+    <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
+
+      <!-- セクション 1 ヘッダー -->
+      <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="お気に入りの削除" />
+
+      <!-- セクション 1 ボディ -->
+      <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,25" TextWrapping="Wrap">
+        <TextBlock.Text>
+          お気に入りを一括して削除します。
+        </TextBlock.Text>
+      </TextBlock>
+      <Button x:Name="favoriteDeleteButton" Content="削除" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="favoriteDeleteButton_Click"/>
+
+    </StackPanel>
+
+
+
+    <!-- 必要に応じてコンテンツ セクションを以下でさらに定義します -->
+
+    <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
+
+      <!-- セクション 1 ヘッダー -->
+      <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="履歴の設定" />
+
+      <!-- セクション 1 ボディ -->
+      <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,25" TextWrapping="Wrap">
+        <TextBlock.Text>
+          このスイッチにより、履歴を残すかどうかの設定ができます。
+          オンで残します。（デフォルトはオン）
+        </TextBlock.Text>
+      </TextBlock>
+      <ToggleSwitch x:Name="historySwitch" Header="ToggleSwitch" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" OnContent="On" OffContent="Off" 
+              Toggled="ToggleSwitch_Toggled"/>
+
+    </StackPanel>
+
+    <StackPanel>
+      <ComboBox x:Name="UrlComboBox" Header="ホームページの設定" SelectionChanged="ComboBox_SelectionChanged">
+        <ComboBoxItem>http://www.yahoo.co.jp/</ComboBoxItem>
+        <ComboBoxItem>http://www.google.co.jp/</ComboBoxItem>
+      </ComboBox>
+      
+      
+    </StackPanel>
+      
+      
+
+  </StackPanel>
+</Page>

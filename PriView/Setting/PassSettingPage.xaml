@@ -1,0 +1,60 @@
+﻿<Page
+    x:Class="PriView.Setting.PassSettingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PriView.Setting"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+  <!-- この StackPanel はコンテンツ セクションの垂直レイアウト用のルート パネルとして機能します -->
+  <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+
+    <!-- 以下の StackPanel では個々のコンテンツ セクションを定義します -->
+
+    <!-- コンテンツ セクション 1-->
+    <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
+
+      <!-- セクション 1 ヘッダー -->
+      <TextBlock x:Name="PassSaveBlock" x:Uid="PassSave" Style="{StaticResource TitleTextBlockStyle}" Text="パスワードの登録" />
+
+      <!-- セクション 1 ボディ -->
+      <TextBlock x:Uid="PassSetText" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,0" TextWrapping="Wrap">
+        <TextBlock.Text >
+          kariパスワードを設定してください。空欄のまま決定するとパスワードは設定されません。
+        </TextBlock.Text>
+      </TextBlock>
+
+    </StackPanel>
+
+    <!-- セクション 1 ヘッダー -->
+    <TextBlock x:Uid="Attention" Style="{StaticResource TitleTextBlockStyle}"  Text="注意！" />
+
+    <!-- セクション 1 ボディ -->
+    <TextBlock x:Uid="AttentionText"  Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,0" TextWrapping="Wrap">
+      <TextBlock.Text >
+        仮：パスワードに使用できる物は数字かつ4桁までです。
+      </TextBlock.Text>
+    </TextBlock>
+
+    <TextBlock x:Name="AttentionBox"  Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,0" TextWrapping="Wrap">
+      <TextBlock.Text >
+        仮：パスワードに使用できる物は数字かつ4桁までです。
+      </TextBlock.Text>
+    </TextBlock>
+
+    <StackPanel Style="{StaticResource SettingsFlyoutSectionStyle}">
+
+    </StackPanel>
+
+    <TextBlock x:Uid="PassEnter" Text="パスワードを入力してください" Style="{StaticResource TitleTextBlockStyle}"/>
+    <TextBox x:Name="PassBox1"  HorizontalAlignment="Left" Width="150" TextChanged="TextBox_TextChanged"/>
+    <TextBlock x:Uid="PassEnterAgain" Text="もう一度パスワードを入力してください" Style="{StaticResource TitleTextBlockStyle}"/>
+    <TextBox x:Name="PassBox2"  HorizontalAlignment="Left" Width="150" TextChanged="TextBox_TextChanged_1"/>
+    <TextBlock x:Name="PassResult" Text="{Binding FirstTime}" Style="{StaticResource TitleTextBlockStyle}"/>
+    <Button x:Uid="Registration" Margin="50,25,50,25" Content="Button" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="Button_Click"/>
+    <!-- 必要に応じてコンテンツ セクションを以下でさらに定義します -->
+
+  </StackPanel>
+
+</Page>
