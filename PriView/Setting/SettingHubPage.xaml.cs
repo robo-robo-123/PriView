@@ -27,7 +27,7 @@ namespace PriView.Setting
     {
       this.InitializeComponent();
       this.generalFrame.Navigate(typeof(Setting.GeneralSettingsFlyout));
-      this.passFrame.Navigate(typeof(Setting.MainSettingPage));
+      //this.passFrame.Navigate(typeof(Setting.MainSettingPage));
       SystemNavigationManager.GetForCurrentView().BackRequested += (_, args) =>
       {
         if (Frame.CanGoBack)

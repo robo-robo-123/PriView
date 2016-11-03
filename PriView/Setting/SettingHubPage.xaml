@@ -13,8 +13,13 @@
       <PivotItem Header="一般設定">
         <Frame x:Name="generalFrame" />
       </PivotItem>
-      <PivotItem Header="パスワード設定">
+      <PivotItem Header="操作方法">
+        <!--
         <Frame x:Name="passFrame" />
+      -->
+        <TextBlock >
+          てｓｔ
+        </TextBlock>
       </PivotItem>
     </Pivot>
     </Grid>

@@ -5,18 +5,18 @@
     xmlns:common="using:PriView.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  xmlns:ad="using:Microsoft.Advertising.WinRT.UI"
+    xmlns:ad="using:Microsoft.Advertising.WinRT.UI"
     x:Name="pageRoot"
-    x:Class="PriView.Browser.MainBrowser"
+    x:Class="PriView.Browser.Browser1"
     DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Mode=Self}}"
-  NavigationCacheMode="Enabled"
-    mc:Ignorable="d">
+    NavigationCacheMode="Enabled"
+    mc:Ignorable="d" Loaded="pageRoot_Loaded">
 
   <Page.Resources>
-    <!-- TODO: Delete this line if the key AppName is declared in App.xaml -->
     <CollectionViewSource x:Name="cvs1" />
     <CollectionViewSource x:Name="cvs2" />
   </Page.Resources>
+  
   <Page.BottomAppBar>
     <CommandBar  ClosedDisplayMode="Compact" >
       <CommandBar.SecondaryCommands>
@@ -24,8 +24,6 @@
         <AppBarButton Icon="Favorite"  IsCompact="True" Label="Add Favorite"
         		Tapped="buttonFavorite_Tapped"
         		IsEnabled="{Binding CanGoForward, ElementName=webView1, Mode=OneWay}" Width="Auto" />
-       <!-- <AppBarButton  Icon="Home" IsCompact="True" Label="home"
-                                  Tapped="buttonHome_Tapped"  RelativePanel.LeftOf="UrlBox" RelativePanel.Below="buttonPanel" />-->
         <AppBarButton  Icon="ReShare" IsCompact="True" Label="share" Tapped="ShareButton_Tapped" />
         <AppBarButton  Icon="Home" IsCompact="True" Label="history"  >
           <AppBarButton.Flyout>
@@ -84,43 +82,7 @@
 
             <AppBarButton  Icon="Refresh" IsCompact="True" 
         		Tapped="buttonRefresh_Tapped" 
-        		IsEnabled="{Binding CanGoBack, ElementName=webView1, Mode=OneWay}" Width="50"
-                            />
-
-            <!--
-          <AppBarButton  Margin="0" Icon="Back" IsCompact="True" 
-                                  Tapped="buttonGoBack_Tapped" 
-                     IsEnabled="{Binding CanGoBack, ElementName=webView1, Mode=OneWay}"
-                            />
-
-          <AppBarButton Icon="Forward" IsCompact="True" Margin="0"
-              Tapped="buttonGoForward_Tapped"
-              IsEnabled="{Binding CanGoForward, ElementName=webView1, Mode=OneWay}"  />
-
-          <AppBarButton Icon="Refresh" Margin="0" IsCompact="True"
-                        Tapped="buttonRefresh_Tapped"
-                        IsEnabled="{Binding CanGoForward, ElementName=webView1, Mode=OneWay}"  />
-
--->
-            <!--  
-        </StackPanel>
-
-        <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" RelativePanel.RightOf="buttonPanel">
-
-                          -->
-
-
-            <!--
-          <Button Content="P" Margin="0,0,25,0"
-                            Tapped="ButtonPass_Tapped" FontSize="25" Width="50" Height="50"
-                            />-->
-            <!-- 
-          <AppBarSeparator IsCompact="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-
-                           
-          <Button x:Name="HomeButton" Content="H" Margin="0,0,10,0" 
-                                  Tapped="buttonMenu_Tapped" FontSize="25" Width="50" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
-                            />-->
+        		IsEnabled="{Binding CanGoBack, ElementName=webView1, Mode=OneWay}" Width="50" />
 
             <AppBarButton x:Name="lockButton"  Label="lock" Tapped="ButtonPass_Tapped" IsCompact="True" Width="50">
               <AppBarButton.Icon>
@@ -130,9 +92,7 @@
 
             <AppBarButton  Icon="Home" IsCompact="True" Label="home" Tapped="buttonHome_Tapped" Width="50"  />
 
-
           </StackPanel>
-
 
           <Button x:Name="goButton" Content="Go" HorizontalAlignment="Right" VerticalAlignment="Stretch" Width="50" 
                   Height="50" FontSize="12" Tapped="buttonGo_Tapped"  RelativePanel.Below="buttonPanel"/>
@@ -147,17 +107,7 @@
     </CommandBar>
   </Page.BottomAppBar>
 
-  <!--
-        This grid acts as a root panel for the page that defines two rows:
-        * Row 0 contains the back button and page title
-        * Row 1 contains the rest of the page layout
-    -->
   <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
-
-    
-
-    <!---->
-
 
 		<VisualStateManager.VisualStateGroups>
 			<VisualStateGroup x:Name="WindowStates">
@@ -166,9 +116,6 @@
 						<AdaptiveTrigger MinWindowWidth="650" />
 					</VisualState.StateTriggers>
 					<VisualState.Setters>
-						<!--<Setter Target="frame2.Visibility" Value="Visible"/>
-          <Setter Target="grid.Width" Value="0"/>
-          Target="SplitView.DisplayMode" Value="CompactInline"-->
     <Setter Target="adGrid2.Visibility" Value="Collapsed"/>
     <Setter Target="adGrid.Visibility" Value="Visible"/>
     <Setter Target="webView1.(RelativePanel.RightOf)" Value="adGrid" />
@@ -190,8 +137,6 @@
         <Setter Target="webView1.(RelativePanel.Below)" Value="adGrid2" />
         <Setter Target="webView1.(RelativePanel.AlignTopWithPanel)" Value="false" />
         <Setter Target="webView1.(RelativePanel.AlignLeftWithPanel)" Value="true" />
-        <!--<Setter Target="frame2.Visibility" Value="Collapsed"/>
-          <Setter Target="grid.Width" Value="0"/>-->
       </VisualState.Setters>
     </VisualState>
     </VisualStateGroup>
@@ -199,48 +144,17 @@
 
 
     <RelativePanel>
-      <!-- Back button and page title -->
-      <!--<Grid.ColumnDefinitions>
-        <ColumnDefinition Width="200"/>
-        <ColumnDefinition/>
-      </Grid.ColumnDefinitions>-->
-
       <Grid x:Name="adGrid" Background="Gray" Width="160" Height="640">
-        <!--
-        <TextBlock Text="広告予定" Foreground="White" FontSize="18"
-					HorizontalAlignment="Right" Margin="0,5,5,0"/>
-        <TextBlock Foreground="White" VerticalAlignment="Bottom" Margin="5,0,0,5" >
-					<Run Text="テスト："/>
-					<LineBreak/><Hyperlink
-						NavigateUri="http://robo-robo.hatenablog.com/"
-						Foreground="LightCyan" Language="ja-JP">
-						<Run Text="PriView"/>
-					</Hyperlink>
-        </TextBlock>-->
         <ad:AdControl x:Name="AdMediator_516643" HorizontalAlignment="Left" Height="640" ApplicationId="3f83fe91-d6be-434d-a0ae-7351c5a997f1" AdUnitId="10865273" VerticalAlignment="Top" Width="160"/>
       </Grid>
 
       <Grid x:Name="adGrid2" Background="Gray" Width="300" Height="50">
-        <!--
-        <TextBlock Text="広告予定" Foreground="White" FontSize="18"
-					HorizontalAlignment="Right" Margin="0,5,5,0"/>
-        <TextBlock Foreground="White" VerticalAlignment="Bottom" Margin="5,0,0,5" >
-					<Run Text="テスト："/>
-					<LineBreak/><Hyperlink
-						NavigateUri="http://robo-robo.hatenablog.com/"
-						Foreground="LightCyan" Language="ja-JP">
-						<Run Text="PriView"/>
-					</Hyperlink>
-        </TextBlock>-->
         <ad:AdControl x:Name="AdMediator_03EFB6" HorizontalAlignment="Left" Height="50" ApplicationId="3f83fe91-d6be-434d-a0ae-7351c5a997f1" AdUnitId="10865275" VerticalAlignment="Top" Width="300"/>
 
       </Grid>
 
       <WebView x:Name="webView1"  RelativePanel.RightOf="adGrid"
-                 
-
 				RelativePanel.AlignRightWithPanel="True"
-               
 				RelativePanel.AlignTopWithPanel="True"
 				RelativePanel.AlignBottomWithPanel="True" NewWindowRequested="webView1_NewWindowRequested_1" 
                     />

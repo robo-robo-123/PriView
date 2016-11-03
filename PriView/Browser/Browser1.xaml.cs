@@ -28,53 +28,37 @@ namespace PriView.Browser
   /// <summary>
   /// 多くのアプリケーションに共通の特性を指定する基本ページ。
   /// </summary>
-  public sealed partial class MainBrowser : Page
+  public sealed partial class Browser1 : Page
   {
 
-    private NavigationHelper navigationHelper;
+    //private NavigationHelper navigationHelper;
     private ObservableDictionary defaultViewModel = new ObservableDictionary();
+    public ViewModel.GeneralViewModel ViewModel { get; } = new ViewModel.GeneralViewModel();
+
     public int flag { set; get; }
 
-    ObservableCollection<string> stock;
+    //ObservableCollection<string> stock;
     List<string> favorites;
     List<string> favorites_load;
 
     ObservableCollection<string> histories;
-
-    /// <summary>
-    /// これは厳密に型指定されたビュー モデルに変更できます。
-    /// </summary>
-    public ObservableDictionary DefaultViewModel
-    {
-      get { return this.defaultViewModel; }
-    }
-
-    /// <summary>
-    /// NavigationHelper は、ナビゲーションおよびプロセス継続時間管理を
-    /// 支援するために、各ページで使用します。
-    /// </summary>
-    public NavigationHelper NavigationHelper
-    {
-      get { return this.navigationHelper; }
-    }
+    Logic.PopulateHistories s1 = new Logic.PopulateHistories();
+    Logic.PopulateFavorites s2 = new Logic.PopulateFavorites();
 
 
-    public MainBrowser()
+    public Browser1()
     {
       this.InitializeComponent();
 
 //      TitleBlock.Text = "読み込み中";
-      stock = new ObservableCollection<string>();
+      //stock = new ObservableCollection<string>();
+
       favorites = new List<string>();
       favorites_load = new List<string>();
       histories = new ObservableCollection<string>();
 
       //var p1 = new Logic.HistoryDataStore(ref histories);
       //cvs1.Source = histories;
-
-      this.navigationHelper = new NavigationHelper(this);
-      this.navigationHelper.LoadState += navigationHelper_LoadState;
-      this.navigationHelper.SaveState += navigationHelper_SaveState;
 
       webView1.ContentLoading += webView1_ContentLoading;
       webView1.NavigationStarting += webView1_NavigationStarting;
@@ -98,6 +82,7 @@ namespace PriView.Browser
     //event
     private void App_BackRequested(object sender, BackRequestedEventArgs e)
     {
+      e.Handled = true;
       try
       {
         this.webView1.GoBack();
@@ -106,9 +91,61 @@ namespace PriView.Browser
       {
         return;
       }
-      e.Handled = true;
     }
 
+
+    private void pageRoot_Loaded(object sender, RoutedEventArgs e)
+    {
+      s1.populateHistories();
+
+      var p1 = new Logic.HistoryDataStore(ref histories);
+      cvs1.Source = histories;
+
+      //var s2 = new Logic.PopulateFavorites();
+      s2.populateFavorites();
+
+      var p2 = new Logic.FavoriteDataStore(ref favorites_load);
+      cvs2.Source = favorites_load;
+
+    }
+
+    /// このセクションに示したメソッドは、NavigationHelper がページの
+    /// ナビゲーション メソッドに応答できるようにするためにのみ使用します。
+    /// 
+    /// ページ固有のロジックは、
+    /// <see cref="GridCS.Common.NavigationHelper.LoadState"/>
+    /// および <see cref="GridCS.Common.NavigationHelper.SaveState"/> のイベント ハンドラーに配置する必要があります。
+    /// LoadState メソッドでは、前のセッションで保存されたページの状態に加え、
+    /// ナビゲーション パラメーターを使用できます。
+
+      //最後に保存したページを、セーブするようにする
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
+      ViewModel.Last_url = webView1.Source.ToString();
+
+    }
+
+    //page読み込み時
+    //最後に表示したページを保存して、それを読み込ませるようにする
+    //失敗したら、デフォルトのページ
+    protected async override void OnNavigatedTo(NavigationEventArgs e)
+    {
+      try
+      {
+        //this.webView1.Navigate(ViewModel.Default_url);
+        UrlBox.Text = ViewModel.Last_url;
+        await NavigateAsync();
+        //this.webView1.Navigate(ViewModel.Last_url);
+      }
+      catch(Exception ex)
+      {
+        UrlBox.Text = ex.Message;
+      }
+
+    }
+
+
+    /*
     /// <summary>
     /// このページには、移動中に渡されるコンテンツを設定します。前のセッションからページを
     /// 再作成する場合は、保存状態も指定されます。
@@ -122,67 +159,6 @@ namespace PriView.Browser
     /// セッション。ページに初めてアクセスするとき、状態は null になります。</param>
     async private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
     {
-
-      var p1 = new Logic.HistoryDataStore(ref histories);
-      cvs1.Source = histories;
-
-      var s2 = new Logic.PopulateFavorites();
-      s2.populateFavorites();
-
-      var s1 = new Logic.PopulateHistories();
-      s1.populateHistories();
-
-      var p2 = new Logic.FavoriteDataStore(ref favorites_load);
-      cvs2.Source = favorites_load;
-
-      if (e.NavigationParameter != null)
-      {
-        string msg = e.NavigationParameter.ToString();
-
-        string[] msg2 = msg.Split('\n');
-
-        if (UrlBox.Text == "")
-        {
-          try
-          {
-            UrlBox.Text = msg2[1];
-          }
-          catch
-          {
-            string URL = "";
-            Windows.Storage.ApplicationDataContainer roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
-            try
-            {
-              UrlBox.Text = (string)roamingSettings.Values["exampleSetting"];
-            }
-            catch (Exception ex)
-            {
-              UrlBox.Text = "http://yahoo.co.jp/";
-            }
-            //UrlBox.Text = URL;
-            //UrlBox.Text = "";
-          }
-          await NavigateAsync();
-        }
-
-      }
-
-      else
-      {
-        if (UrlBox.Text == "")
-        {
-          Windows.Storage.ApplicationDataContainer roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
-          try
-          {
-            UrlBox.Text = (string)roamingSettings.Values["exampleSetting"];
-          }
-          catch (Exception ex)
-          {
-            UrlBox.Text = "http://yahoo.co.jp/";
-          }
-          await NavigateAsync();
-        }
-      }
     }
 
     /// <summary>
@@ -197,6 +173,9 @@ namespace PriView.Browser
     {
       e.PageState["PageURL"] = webView1.Source;
     }
+    */
+
+
 
     private void buttonRefresh_Tapped(object sender, TappedRoutedEventArgs e)
     {
@@ -215,10 +194,8 @@ namespace PriView.Browser
       }
     }
 
-
     private void buttonGoForward_Tapped(object sender, TappedRoutedEventArgs e)
     {
-
       try
       {
         this.webView1.GoForward();
@@ -228,74 +205,6 @@ namespace PriView.Browser
         return;
       }
     }
-
-    #region NavigationHelper の登録
-
-    /// このセクションに示したメソッドは、NavigationHelper がページの
-    /// ナビゲーション メソッドに応答できるようにするためにのみ使用します。
-    /// 
-    /// ページ固有のロジックは、
-    /// <see cref="GridCS.Common.NavigationHelper.LoadState"/>
-    /// および <see cref="GridCS.Common.NavigationHelper.SaveState"/> のイベント ハンドラーに配置する必要があります。
-    /// LoadState メソッドでは、前のセッションで保存されたページの状態に加え、
-    /// ナビゲーション パラメーターを使用できます。
-
-    protected override void OnNavigatedTo(NavigationEventArgs e)
-    {
-      //     SettingsPane.GetForCurrentView().CommandsRequested += MainGroupPage_CommandsRequested;
-      try
-      {
-        Windows.Storage.ApplicationDataContainer roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
-        string URL = (string)roamingSettings.Values["exampleSetting"];
-
-        Uri newUri;
-        Uri.TryCreate(URL, UriKind.Absolute, out newUri);
-
-        if (this.UrlBox.Text == "")
-        {
-          //  this.webView1.Navigate(newUri);
-          //webView1.Source = URL;
-        }
-        else
-        {
-          //  Uri.TryCreate(this.UrlBox.Text, UriKind.Absolute, out newUri);
-          // this.webView1.Navigate(newUri);
-        }
-      }
-      catch (Exception ex)
-      { }
-
-      navigationHelper.OnNavigatedTo(e);
-    }
-
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
-
-      navigationHelper.OnNavigatedFrom(e);
-      //SettingsPane.GetForCurrentView().CommandsRequested -= MainGroupPage_CommandsRequested;
-    }
-
-    #endregion
-
-
-    /*
-    private bool _pageIsLoading;
-    bool pageIsLoading
-    {
-      get { return _pageIsLoading; }
-      set
-      {
-        _pageIsLoading = value;
-    //    goButton.Content = (value ? "Stop" : "Go");
-    //    progressRing1.Visibility = (value ? Visibility.Visible : Visibility.Collapsed);
-        if (!value)
-        {
-     //     navigateBack.IsEnabled = webView1.CanGoBack;
-     //     navigateForward.IsEnabled = webView1.CanGoForward;
-        }
-      }
-    }
-    */
 
 
     //web
@@ -307,8 +216,6 @@ namespace PriView.Browser
       {
         URIBlock.Text = url;
         UrlBox.Text = url;
-        //appendLog(String.Format("Starting navigation to: \"{0}\".\n", url));
-        //pageIsLoading = true;
       }
     }
 
@@ -322,8 +229,7 @@ namespace PriView.Browser
 
        // write file
        StorageFolder roamingFolder = ApplicationData.Current.RoamingFolder;
-       StorageFile file = await roamingFolder.CreateFileAsync(filePath,
-           CreationCollisionOption.OpenIfExists);
+       StorageFile file = await roamingFolder.CreateFileAsync(filePath, CreationCollisionOption.OpenIfExists);
       //       StorageFile file2 = await roamingFolder.CreateFileAsync(filePath2,
       //  CreationCollisionOption.OpenIfExists);
       try
@@ -333,19 +239,24 @@ namespace PriView.Browser
       }
       catch (Exception ex) { }
 
-      var s1 = new Logic.PopulateHistories();
-       s1.populateHistories();
+      //毎回やるっておかしいよね？
+      //var s1 = new Logic.PopulateHistories();
+       s1.populateHistories2((string)webView1.DocumentTitle + "\t" + url + "\t" + DateTime.Now + "\n");
 
       var p1 = new Logic.HistoryDataStore(ref histories);
       cvs1.Source = histories;
 
+      /*
       var p2 = new Logic.FavoriteDataStore(ref favorites_load);
       cvs2.Source = favorites_load;
 
        var s2 = new Logic.PopulateLastview();
        s2.populateLastview();
+       */
+      ViewModel.Last_url = webView1.Source.ToString();
 
-   }
+
+    }
 
     private void webView1_NewWindowRequested_1(WebView sender, WebViewNewWindowRequestedEventArgs args)
     {
@@ -361,105 +272,31 @@ namespace PriView.Browser
 
     private void webView1_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
     {
+
     }
 
 
-
-    //data
-    async private void PopulateHistories()
-       {
-//         stock = new List<string>();
-         try
-         {
-           String filePath = "HistoryData.csv";
-
-           StorageFolder roamingFolder = ApplicationData.Current.RoamingFolder;
-             StorageFile file = await roamingFolder.GetFileAsync(filePath);
-           IList<String> strList = await FileIO.ReadLinesAsync(file);
-           foreach (String str in strList)
-           {
-
-             string[] msg1 = str.Split('\t');
-             string msg2 = string.Join("\n", msg1);
-
-             stock.Add(msg2);
-           }
-           var p1 = new Logic.HistoryDataStore(stock);
-
-         }
-         catch (FileNotFoundException ex)
-         {
-           // ファイル無し
-           stock.Add("null");
-         }
-       }
-
-       async private void PopulateFavorites()
-       {
-         try
-         {
-
-         String filePath = "FavoriteData.csv";
-         // write file
-         StorageFolder roamingFolder = ApplicationData.Current.RoamingFolder;
-
-           StorageFile file = await roamingFolder.GetFileAsync(filePath);
-           IList<String> strList = await FileIO.ReadLinesAsync(file);
-           foreach (String str in strList)
-           {
-             string[] msg1 = str.Split('\t');
-             string msg2 = string.Join("\n", msg1);
-             favorites.Add(msg2);
-           }
-           var p1 = new Logic.FavoriteDataStore(favorites);
-         }
-         catch (FileNotFoundException ex)
-         {
-        // ファイル無し
-        stock.Add("null");
-        //ListViewItem item = new ListViewItem();
-        //item.Content = "null";
-        //favorites.Add("null");
-      }
-
-       }
-
-
-
+    //MVVM使って、登録したものを読み込ませるだけにする
     async private void buttonHome_Tapped(object sender, TappedRoutedEventArgs e)
     {
-      /*      System Uri aiueo = 
-            webView1.Source = (System Uri)"http://yahoo.co.jp/";*/
-      /*      System.Uri URI = webView1.Source;
-            this.Frame.Navigate(typeof(MainHubPage), "test");*/
-      //      this.Frame.Navigate(typeof(MainHubPage));
-
-      //      UrlBox.Text = "http://yahoo.co.jp/";
-
-      string URL = "";
-      Windows.Storage.ApplicationDataContainer roamingSettings = Windows.Storage.ApplicationData.Current.RoamingSettings;
       try
       {
-        UrlBox.Text = (string)roamingSettings.Values["exampleSetting"];
+        UrlBox.Text = ViewModel.Default_url;
       }
       catch(Exception ex)
       {
         UrlBox.Text = "http://yahoo.co.jp/";
       }
-      //UrlBox.Text = URL;
-
       await NavigateAsync();
     }
 
+    //lock画面へ移動
     private void ButtonPass_Tapped(object sender, TappedRoutedEventArgs e)
     {
-      //string flag ;
-      //flag = URIBlock.Text;
-
       Frame rootFrame = Window.Current.Content as Frame;
-      //rootFrame.Navigate(typeof(InputPassPage),flag);
       rootFrame.Navigate(typeof(MSPassPage));
     }
+
 
    async private void buttonFavorite_Tapped(object sender, TappedRoutedEventArgs e)
     {
@@ -473,14 +310,14 @@ namespace PriView.Browser
 
         // write file
         StorageFolder roamingFolder = ApplicationData.Current.RoamingFolder;
-        StorageFile file = await roamingFolder.CreateFileAsync(filePath,
-            CreationCollisionOption.OpenIfExists);
+        StorageFile file = await roamingFolder.CreateFileAsync(filePath, CreationCollisionOption.OpenIfExists);
 
         await FileIO.AppendTextAsync(file, (string)webView1.DocumentTitle + "\t" + URIBlock.Text + "\t" + DateTime.Now + "\n");
 
-        // PopulateFavorites();
-        var s2 = new Logic.PopulateFavorites();
-        s2.populateFavorites();
+        s2.populateFavorites2((string)webView1.DocumentTitle + "\t" + URIBlock.Text + "\t" + DateTime.Now + "\n");
+        var p2 = new Logic.FavoriteDataStore(ref favorites_load);
+        cvs2.Source = favorites_load;
+
       }
       else if (result == ContentDialogResult.Secondary)
       {
@@ -488,7 +325,6 @@ namespace PriView.Browser
       else
       {
       }
-
 
     }
 
@@ -521,7 +357,6 @@ namespace PriView.Browser
      }
      else if (this.UrlBox.Text == "")
       {
-
       }
      else
      {
@@ -531,9 +366,12 @@ namespace PriView.Browser
      }
    }
 
-    private void GridView_ItemClick(object sender, ItemClickEventArgs e)
+    private async void GridView_ItemClick(object sender, ItemClickEventArgs e)
     {
-      this.Frame.Navigate(typeof(Browser.MainBrowser), e.ClickedItem);
+      var str = e.ClickedItem.ToString();
+      string[] msg1 = str.Split('\n');
+      UrlBox.Text = msg1[1];
+      await NavigateAsync();
     }
 
     //setting_page
@@ -543,6 +381,7 @@ namespace PriView.Browser
     }
 
     //share
+    //MVVM使って移動させる。
     private void ShareButton_Tapped(object sender, TappedRoutedEventArgs e)
     {
       ShareSourceLoad();
@@ -562,6 +401,7 @@ namespace PriView.Browser
       request.Data.Properties.Description = "Share of Web page.";
       request.Data.SetText((string)webView1.DocumentTitle + "\t" + URIBlock.Text);
     }
+
 
   }
 }
